@@ -20,10 +20,10 @@ public class KafkaController {
 		this.kfkProducer = kfkProducerService;
 		this.fetchDataFromRemote = fetchDataFromRemote;
 	}
-	@GetMapping("/send")
-    public String sendMessage() {
-		kfkProducer.sendMessage("sweettooth", fetchDataFromRemote.getResponseFromRemote());
-        return "Message sent to Kafka!";
-    }
+//	@GetMapping("/send")
+//    public String sendMessage() {
+//		kfkProducer.sendMessage("sweettooth", fetchDataFromRemote.getResponseFromRemote());
+//        return "Message sent to Kafka!";
+//    }
 
 }

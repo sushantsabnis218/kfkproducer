@@ -5,24 +5,21 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.whykafkawhy.kfkproducer.services.FetchDataFromRemote;
+import com.whykafkawhy.kfkproducer.services.KfkProducerService;
 
 @Component
 public class FetchStockDataScheduler {
 	 
-	private final KafkaTemplate<String, String> kfkProducer;
+//	private final KafkaTemplate<String, String> kfkProducer;
+	private final KfkProducerService kfkProducerService;
 	private static long counter = 0;
 	
-	public FetchStockDataScheduler(KafkaTemplate<String, String> kfkProducer) {
-		this.kfkProducer = kfkProducer;
+	public FetchStockDataScheduler(KfkProducerService kfkProducerService) {
+		this.kfkProducerService = kfkProducerService;
 	}
-	@Scheduled(fixedRate = 100)
+	@Scheduled(fixedRate = 12000)
 	public void runTask() {
-		kfkProducer.send("sweettooth", Long.toString(counter++)).thenAccept(
-				result -> System.out.println("Message produced to Kafka:"+ result.getRecordMetadata().offset())
-		).exceptionally( ex ->{
-				System.err.println("Message failed : "+ex.getMessage());
-				return null;
-		});
+		kfkProducerService.sendMessage("sweettooth");
 	}
 
 }

@@ -7,14 +7,21 @@ import org.springframework.stereotype.Service;
 public class KfkProducerService {
 	
 	private final KafkaTemplate<String, String> kafkaTemplate;
+	private final FetchDataFromRemote fetchDataFromRemote;
 	
-	public KfkProducerService(KafkaTemplate<String, String> kafkaTemplate) {
+	public KfkProducerService(KafkaTemplate<String, String> kafkaTemplate, FetchDataFromRemote fetchDataFromRemote) {
 		this.kafkaTemplate = kafkaTemplate;
+		this.fetchDataFromRemote = fetchDataFromRemote;
 	}
 	
-	public void sendMessage(String topic, String message) {
-		for(int i = 0; i < 100; i++)
-			kafkaTemplate.send(topic,i+"", i+" "+message);
-		System.out.println("Message sent to kafka...");
+	public void sendMessage(String topic) {
+		String message = fetchDataFromRemote.getResponseFromRemote();
+		kafkaTemplate.send(topic,message).thenAccept(
+				result -> System.out.println("Meesage produced to Kafka"+result)
+		).exceptionally(
+				ex -> {System.out.println("Exception occurred..."+ex.getLocalizedMessage());
+					return null;
+				}
+		);	
 	}
 }
